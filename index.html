@@ -163,7 +163,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 25px 15px 90px 15px;
+            padding: 25px 15px 25px 15px;
             background-image: 
                 radial-gradient(at 10% 10%, rgba(168, 121, 193, 0.18) 0px, transparent 50%),
                 radial-gradient(at 90% 90%, rgba(124, 98, 159, 0.20) 0px, transparent 50%),
@@ -988,12 +988,48 @@
             color: #fff;
         }
 
+        /* Admin RSVP List & Delete Styling */
+        .admin-rsvp-item {
+            background: var(--section-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-delete-rsvp {
+            background: rgba(220, 53, 69, 0.12);
+            color: #dc3545;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .btn-delete-rsvp:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
         /* Toast notification */
         .toast {
             position: fixed;
-            bottom: 80px;
+            bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateX(-50%) translateY(40px);
+            opacity: 0;
+            pointer-events: none;
             background: var(--primary-dark);
             color: var(--white);
             padding: 12px 24px;
@@ -1001,11 +1037,16 @@
             font-size: 0.88rem;
             font-weight: 500;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 3000;
+            white-space: nowrap;
+            max-width: 90vw;
+            text-align: center;
         }
 
         .toast.show {
+            opacity: 1;
+            pointer-events: auto;
             transform: translateX(-50%) translateY(0);
         }
 
@@ -1093,17 +1134,18 @@
             </div>
             <div class="map-frame-wrapper">
                 <iframe 
-                    title="Lokasi The Glasshouse Cafe Eco Sanctuary"
+                    id="mapIframe"
+                    title="Lokasi Majlis"
                     src="https://maps.google.com/maps?q=The%20Glasshouse%20Eco%20Sanctuary&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                     allowfullscreen="" 
                     loading="lazy">
                 </iframe>
             </div>
             <div class="map-nav-grid">
-                <a href="https://maps.google.com/?q=The+Glasshouse+Cafe+Eco+Sanctuary" target="_blank" class="nav-btn nav-btn-gmaps">
+                <a id="btnGmaps" href="https://maps.google.com/?q=The+Glasshouse+Cafe+Eco+Sanctuary" target="_blank" class="nav-btn nav-btn-gmaps">
                     <i class="fa-solid fa-location-arrow"></i> Google Maps
                 </a>
-                <a href="https://waze.com/ul?q=The+Glasshouse+Eco+Sanctuary" target="_blank" class="nav-btn nav-btn-waze">
+                <a id="btnWaze" href="https://waze.com/ul?q=The+Glasshouse+Eco+Sanctuary" target="_blank" class="nav-btn nav-btn-waze">
                     <i class="fa-brands fa-waze"></i> Waze Navigation
                 </a>
             </div>
@@ -1133,7 +1175,7 @@
         </div>
 
         <!-- Dress Code Palette -->
-        <div class="palette-container" id="paletteSection">
+        <div class="palette-container" id="paletteSection" style="display: none;">
             <div class="palette-title">Tema Pakaian: Pastel Lilac & Neutrals</div>
             <div class="color-swatches">
                 <div class="swatch-wrapper">
@@ -1216,7 +1258,7 @@
     </div>
 
     <!-- Sticky Bottom Nav Bar -->
-    <div class="sticky-bottom-nav" id="stickyNavSection">
+    <div class="sticky-bottom-nav" id="stickyNavSection" style="display: none;">
         <a href="#utama" class="sticky-nav-item">
             <i class="fa-solid fa-house"></i>
             <span>Utama</span>
@@ -1301,11 +1343,11 @@
                     </label>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label style="font-size: 0.82rem; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-dark);">
-                            <input type="checkbox" id="toggleDressCode" checked style="accent-color: var(--primary); width: 16px; height: 16px;">
+                            <input type="checkbox" id="toggleDressCode" style="accent-color: var(--primary); width: 16px; height: 16px;">
                             Paparkan Tema Pakaian (Dress Code)
                         </label>
                         <label style="font-size: 0.82rem; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-dark);">
-                            <input type="checkbox" id="toggleStickyNav" checked style="accent-color: var(--primary); width: 16px; height: 16px;">
+                            <input type="checkbox" id="toggleStickyNav" style="accent-color: var(--primary); width: 16px; height: 16px;">
                             Paparkan Butang Apungan Navigasi (Sticky Bottom Nav)
                         </label>
                     </div>
@@ -1426,6 +1468,21 @@
                     </div>
                 </div>
 
+                <!-- Pengurusan & Padam RSVP / Ucapan -->
+                <div class="form-group" style="margin-top: 18px; border-top: 1px dashed rgba(124, 98, 159, 0.3); padding-top: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <label style="font-weight: 700; color: var(--primary); margin: 0;">
+                            <i class="fa-solid fa-users-slash" style="margin-right: 4px;"></i> Pengurusan & Padam RSVP / Ucapan
+                        </label>
+                        <button type="button" id="btnClearAllRsvp" class="btn-delete-rsvp" style="padding: 4px 8px; font-size: 0.72rem;">
+                            <i class="fa-solid fa-trash-can"></i> Padam Semua
+                        </button>
+                    </div>
+                    <div id="adminRsvpContainer">
+                        <!-- Dynamic list of RSVPs generated by JavaScript -->
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan & Kemaskini
                 </button>
@@ -1436,12 +1493,151 @@
     <!-- Toast notification -->
     <div class="toast" id="toastMsg">RSVP anda berjaya dihantar! Terima kasih.</div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
         // State for Selected Theme
         let selectedThemeId = "pastel-lavender";
 
-        // Sila gantikan URL di bawah dengan URL Google Apps Script Web App anda sendiri
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
+        // Sila gantikan URL di bawah dengan URL Google Apps Script Web App anda jika perlu
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-tr3IyFkl_Rxyd8aPFxze8A5rURdf-SWs_6w3zjki7wiiB3Jd9pa_Oqx6GBSXVge4-w/exec";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kad-jemputan-nikah';
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let analytics = null;
+
+        // Firebase Configuration bagi projek mysmartapps
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSqblFdWXAIg9IFV3EZN-iLKXhfkL0c2g",
+            authDomain: "mysmartapps.firebaseapp.com",
+            projectId: "mysmartapps",
+            storageBucket: "mysmartapps.firebasestorage.app",
+            messagingSenderId: "329775742642",
+            appId: "1:329775742642:web:22751517bb2da543bcd3ab",
+            measurementId: "G-R2Q3WNWVH1"
+        };
+
+        async function initFirebase() {
+            try {
+                // Menggunakan konfigurasi yang dibekalkan pengguna
+                const configToUse = (typeof __firebase_config !== 'undefined' && __firebase_config) 
+                    ? JSON.parse(__firebase_config) 
+                    : firebaseConfig;
+
+                const app = initializeApp(configToUse);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                try {
+                    analytics = getAnalytics(app);
+                } catch (aErr) {
+                    console.log("Analytics diabaikan dalam persekitaran iframe/tempatan:", aErr);
+                }
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                currentUser = auth.currentUser;
+                if (currentUser) {
+                    setupRealtimeSync();
+                }
+            } catch (err) {
+                console.error("Ralat memulakan Firebase:", err);
+            }
+        }
+
+        function setupRealtimeSync() {
+            if (!db || !currentUser) return;
+
+            // Strict Path untuk Tetapan Awam
+            const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
+            
+            onSnapshot(settingsDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    applySettingsFromFirebase(docSnap.data());
+                }
+            }, (error) => {
+                console.error("Ralat snapshot tetapan:", error);
+            });
+
+            // Strict Path untuk Buku Ucapan & RSVP Awam
+            const wishesCollRef = collection(db, 'artifacts', appId, 'public', 'data', 'wishes');
+            
+            onSnapshot(wishesCollRef, (snapshot) => {
+                wishesData = [];
+                snapshot.forEach((docSnap) => {
+                    wishesData.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderWishesList();
+                renderAdminRsvpList();
+            }, (error) => {
+                console.error("Ralat snapshot ucapan:", error);
+            });
+        }
+
+        function applySettingsFromFirebase(data) {
+            if (data.themeId) {
+                selectedThemeId = data.themeId;
+                applyTheme(selectedThemeId);
+                document.querySelectorAll(".theme-card-option").forEach(card => {
+                    if (card.getAttribute("data-theme-id") === selectedThemeId) {
+                        card.classList.add("selected");
+                    } else {
+                        card.classList.remove("selected");
+                    }
+                });
+            }
+            if (data.namaHost) {
+                document.getElementById("displayNamaHost").innerText = data.namaHost;
+                document.getElementById("inputNamaHost").value = data.namaHost;
+            }
+            if (data.namaLelaki) {
+                document.getElementById("displayNamaLelaki").innerText = data.namaLelaki;
+                document.getElementById("inputLelaki").value = data.namaLelaki;
+            }
+            if (data.namaPerempuan) {
+                document.getElementById("displayNamaPerempuan").innerText = data.namaPerempuan;
+                document.getElementById("inputPerempuan").value = data.namaPerempuan;
+            }
+            if (data.tarikh) {
+                document.getElementById("displayTarikhMasa").innerText = data.tarikh;
+                document.getElementById("inputTarikh").value = data.tarikh;
+            }
+            if (data.masa) {
+                document.getElementById("displayMasaSub").innerText = data.masa;
+                document.getElementById("inputMasa").value = data.masa;
+            }
+            if (data.lokasi) {
+                document.getElementById("displayLokasiNama").innerText = data.lokasi;
+                document.getElementById("inputLokasi").value = data.lokasi;
+            }
+            if (data.lokasiSub) {
+                document.getElementById("displayLokasiSub").innerText = data.lokasiSub;
+                document.getElementById("inputLokasiSub").value = data.lokasiSub;
+            }
+            if (data.agenda && Array.isArray(data.agenda)) {
+                agendaData = data.agenda;
+                renderMainAgenda();
+            }
+            if (typeof data.showDressCode === 'boolean') {
+                document.getElementById("toggleDressCode").checked = data.showDressCode;
+                document.getElementById("paletteSection").style.display = data.showDressCode ? "block" : "none";
+            }
+            if (typeof data.showStickyNav === 'boolean') {
+                document.getElementById("toggleStickyNav").checked = data.showStickyNav;
+                document.getElementById("stickyNavSection").style.display = data.showStickyNav ? "flex" : "none";
+                document.body.style.paddingBottom = data.showStickyNav ? "90px" : "25px";
+            }
+            updateMapLinks(data.lokasi || "The Glasshouse Cafe", data.lokasiSub || "Eco Sanctuary, Selangor");
+        }
 
         // Dynamic Agenda State
         let agendaData = [
@@ -1449,6 +1645,12 @@
             { time: "4:45 PM", desc: "Upacara Akad Nikah" },
             { time: "5:30 PM", desc: "Sesi Jamuan Petang & Fotografi" },
             { time: "7:00 PM", desc: "Majlis Bersurai" }
+        ];
+
+        // Senarai Data Dynamic RSVP & Ucapan
+        let wishesData = [
+            { id: "1", name: "Ahmad & Keluarga", wish: "Selamat pengantin baru Naim & Sarah! Semoga mahligai yang dibina sentiasa dilimpahi keberkatan dan kebahagiaan hingga ke jannah.", status: "Hadir", pax: "2" },
+            { id: "2", name: "Siti Nurhaliza", wish: "Tahniah buat kedua rakan! Semoga dipermudahkan segala urusan majlis akad nikah.", status: "Hadir", pax: "1" }
         ];
 
         // Theme switching handler setup
@@ -1466,6 +1668,96 @@
 
         function applyTheme(themeId) {
             document.body.setAttribute("data-theme", themeId);
+        }
+
+        function updateMapLinks(lokasi, lokasiSub) {
+            const fullAddress = `${lokasi} ${lokasiSub}`.trim();
+            if (!fullAddress) return;
+            
+            const query = encodeURIComponent(fullAddress);
+            const mapIframe = document.getElementById("mapIframe");
+            const btnGmaps = document.getElementById("btnGmaps");
+            const btnWaze = document.getElementById("btnWaze");
+
+            if (mapIframe) {
+                mapIframe.src = `https://maps.google.com/maps?q=${query}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+            }
+            if (btnGmaps) {
+                btnGmaps.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+            }
+            if (btnWaze) {
+                btnWaze.href = `https://waze.com/ul?q=${query}`;
+            }
+        }
+
+        function renderWishesList() {
+            const container = document.getElementById("wishesList");
+            if (!container) return;
+            if (wishesData.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light); font-size: 0.85rem; padding: 12px 0;">Belum ada ucapan. Jadilah yang pertama mendoakan!</p>';
+                return;
+            }
+            container.innerHTML = wishesData.map(item => `
+                <div class="wish-item">
+                    <div class="wish-author">${escapeHtml(item.name || '')} <span style="font-weight: 400; font-size: 0.72rem; color: var(--accent);">(${escapeHtml(item.status || "Hadir")})</span></div>
+                    <div class="wish-text">${escapeHtml(item.wish || "Tiada ucapan khas.")}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminRsvpList() {
+            const container = document.getElementById("adminRsvpContainer");
+            if (!container) return;
+            if (wishesData.length === 0) {
+                container.innerHTML = '<p style="font-size: 0.8rem; color: var(--text-light); text-align: center; padding: 10px 0;">Tiada senarai RSVP / ucapan ditemui.</p>';
+                return;
+            }
+
+            container.innerHTML = wishesData.map(item => `
+                <div class="admin-rsvp-item">
+                    <div style="flex: 1; min-width: 0; text-align: left;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            ${escapeHtml(item.name || '')}
+                            <span style="font-size: 0.68rem; background: var(--badge-bg); color: var(--primary); padding: 2px 6px; border-radius: 8px; font-weight: 600;">
+                                ${escapeHtml(item.status || "Hadir")} (${escapeHtml(String(item.pax || "1"))} pax)
+                            </span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${escapeHtml(item.wish || "- Tiada ucapan -")}
+                        </div>
+                    </div>
+                    <button type="button" class="btn-delete-rsvp" data-id="${item.id}" title="Padam Rekod Ini">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Delete individual RSVP item from Firebase
+            container.querySelectorAll(".btn-delete-rsvp").forEach(btn => {
+                btn.addEventListener("click", async (e) => {
+                    const idToDelete = e.currentTarget.getAttribute("data-id");
+                    if (db && currentUser && idToDelete) {
+                        try {
+                            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'wishes', idToDelete));
+                        } catch (err) {
+                            console.error("Ralat memadam RSVP:", err);
+                        }
+                    } else {
+                        wishesData = wishesData.filter(item => String(item.id) !== String(idToDelete));
+                        renderAdminRsvpList();
+                        renderWishesList();
+                    }
+                    
+                    if (toastMsg) {
+                        toastMsg.innerText = "Rekod RSVP berjaya dipadam!";
+                        toastMsg.classList.add("show");
+                        setTimeout(() => {
+                            toastMsg.innerText = "RSVP anda berjaya dihantar! Terima kasih.";
+                            toastMsg.classList.remove("show");
+                        }, 2500);
+                    }
+                });
+            });
         }
 
         function renderMainAgenda() {
@@ -1501,7 +1793,6 @@
                 container.appendChild(row);
             });
 
-            // Attach event listener for each minus (-) button
             container.querySelectorAll(".btn-remove-agenda").forEach(btn => {
                 btn.addEventListener("click", (e) => {
                     const idx = parseInt(e.currentTarget.getAttribute("data-index"), 10);
@@ -1556,14 +1847,12 @@
             if (elemSeconds) elemSeconds.innerText = seconds < 10 ? "0" + seconds : seconds;
         }, 1000);
 
-        // RSVP Modal Controls
         const rsvpModal = document.getElementById("rsvpModal");
         const openRsvpBtn = document.getElementById("openRsvpBtn");
         const navRsvp = document.getElementById("navRsvp");
         const closeRsvpBtn = document.getElementById("closeRsvpBtn");
         const rsvpForm = document.getElementById("rsvpForm");
         const toastMsg = document.getElementById("toastMsg");
-        const wishesList = document.getElementById("wishesList");
 
         function showRsvp() {
             if (rsvpModal) rsvpModal.classList.add("active");
@@ -1586,7 +1875,6 @@
             });
         }
 
-        // Admin Edit Modal Controls
         const adminModal = document.getElementById("adminModal");
         const openAdminBtn = document.getElementById("openAdminBtn");
         const closeAdminBtn = document.getElementById("closeAdminBtn");
@@ -1604,7 +1892,40 @@
         if (openAdminBtn) {
             openAdminBtn.addEventListener("click", () => {
                 renderAdminAgendaRows();
+                renderAdminRsvpList();
                 if (adminModal) adminModal.classList.add("active");
+            });
+        }
+
+        const btnClearAllRsvp = document.getElementById("btnClearAllRsvp");
+        if (btnClearAllRsvp) {
+            btnClearAllRsvp.addEventListener("click", async () => {
+                if (wishesData.length === 0) return;
+                
+                if (db && currentUser) {
+                    try {
+                        for (const item of wishesData) {
+                            if (item.id) {
+                                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'wishes', String(item.id)));
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Ralat memadam semua RSVP:", err);
+                    }
+                } else {
+                    wishesData = [];
+                    renderAdminRsvpList();
+                    renderWishesList();
+                }
+                
+                if (toastMsg) {
+                    toastMsg.innerText = "Semua rekod RSVP telah dipadam!";
+                    toastMsg.classList.add("show");
+                    setTimeout(() => {
+                        toastMsg.innerText = "RSVP anda berjaya dihantar! Terima kasih.";
+                        toastMsg.classList.remove("show");
+                    }, 2500);
+                }
             });
         }
 
@@ -1622,15 +1943,12 @@
             });
         }
 
-        // Admin Form Submit Handler
         if (adminForm) {
-            adminForm.addEventListener("submit", (e) => {
+            adminForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
-                // Apply selected theme
                 applyTheme(selectedThemeId);
 
-                // Fetch input values
                 const namaHost = document.getElementById("inputNamaHost")?.value || "";
                 const namaLelaki = document.getElementById("inputLelaki")?.value || "";
                 const namaPerempuan = document.getElementById("inputPerempuan")?.value || "";
@@ -1639,45 +1957,41 @@
                 const lokasi = document.getElementById("inputLokasi")?.value || "";
                 const lokasiSub = document.getElementById("inputLokasiSub")?.value || "";
 
-                // Sync dynamic agenda items from admin form
                 syncAdminInputsToData();
                 renderMainAgenda();
 
                 const showDressCode = document.getElementById("toggleDressCode")?.checked ?? true;
                 const showStickyNav = document.getElementById("toggleStickyNav")?.checked ?? true;
 
-                const paletteSection = document.getElementById("paletteSection");
-                const stickyNavSection = document.getElementById("stickyNavSection");
+                const settingsPayload = {
+                    themeId: selectedThemeId,
+                    namaHost,
+                    namaLelaki,
+                    namaPerempuan,
+                    tarikh,
+                    masa,
+                    lokasi,
+                    lokasiSub,
+                    agenda: agendaData,
+                    showDressCode,
+                    showStickyNav,
+                    updatedAt: new Date().toISOString()
+                };
 
-                if (paletteSection) {
-                    paletteSection.style.display = showDressCode ? "block" : "none";
+                // Simpan tetapan ke Firebase
+                if (db && currentUser) {
+                    try {
+                        const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'config');
+                        await setDoc(settingsDocRef, settingsPayload, { merge: true });
+                    } catch (err) {
+                        console.error("Gagal menyimpan tetapan ke Firebase:", err);
+                    }
+                } else {
+                    applySettingsFromFirebase(settingsPayload);
                 }
-
-                if (stickyNavSection) {
-                    stickyNavSection.style.display = showStickyNav ? "flex" : "none";
-                    document.body.style.paddingBottom = showStickyNav ? "90px" : "25px";
-                }
-
-                // Update DOM Elements
-                const dispHost = document.getElementById("displayNamaHost");
-                const dispLelaki = document.getElementById("displayNamaLelaki");
-                const dispPerempuan = document.getElementById("displayNamaPerempuan");
-                const dispTarikh = document.getElementById("displayTarikhMasa");
-                const dispMasa = document.getElementById("displayMasaSub");
-                const dispLokasi = document.getElementById("displayLokasiNama");
-                const dispLokasiSub = document.getElementById("displayLokasiSub");
-
-                if (dispHost) dispHost.innerText = namaHost;
-                if (dispLelaki) dispLelaki.innerText = namaLelaki;
-                if (dispPerempuan) dispPerempuan.innerText = namaPerempuan;
-                if (dispTarikh) dispTarikh.innerText = tarikh;
-                if (dispMasa) dispMasa.innerText = masa;
-                if (dispLokasi) dispLokasi.innerText = lokasi;
-                if (dispLokasiSub) dispLokasiSub.innerText = lokasiSub;
 
                 if (adminModal) adminModal.classList.remove("active");
 
-                // Show Toast feedback
                 if (toastMsg) {
                     toastMsg.innerText = "Maklumat & Tema kad berjaya dikemaskini!";
                     toastMsg.classList.add("show");
@@ -1689,13 +2003,18 @@
             });
         }
 
-        // Initial render on page load
+        // Initial setup
         initThemeSelector();
         renderMainAgenda();
+        renderWishesList();
+        initFirebase();
 
-        // Form Submit Handler
+        const initLokasi = document.getElementById("displayLokasiNama")?.innerText || "";
+        const initLokasiSub = document.getElementById("displayLokasiSub")?.innerText || "";
+        updateMapLinks(initLokasi, initLokasiSub);
+
         if (rsvpForm) {
-            rsvpForm.addEventListener("submit", (e) => {
+            rsvpForm.addEventListener("submit", async (e) => {
                 e.preventDefault();
                 
                 const namaVal = document.getElementById("nama")?.value || "";
@@ -1709,33 +2028,41 @@
                 if (statusBox) statusBox.style.display = "block";
                 if (submitBtn) submitBtn.disabled = true;
 
-                // Data payload untuk dihantar ke Google Sheets
-                const payload = {
-                    nama: namaVal,
-                    kehadiran: kehadiranVal,
-                    bilangan: bilanganVal,
-                    ucapan: ucapanVal
+                const rsvpPayload = {
+                    name: namaVal,
+                    status: kehadiranVal,
+                    pax: bilanganVal,
+                    wish: ucapanVal,
+                    createdAt: new Date().toISOString()
                 };
 
-                // Hantar data secara latar belakang jika URL Google Script telah dimasukkan
+                if (db && currentUser) {
+                    try {
+                        const wishesCollRef = collection(db, 'artifacts', appId, 'public', 'data', 'wishes');
+                        await addDoc(wishesCollRef, rsvpPayload);
+                    } catch (err) {
+                        console.error("Gagal menyimpan RSVP ke Firebase:", err);
+                    }
+                } else {
+                    wishesData.unshift({ id: Date.now(), ...rsvpPayload });
+                    renderWishesList();
+                }
+
+                // Hantar backup ke Google Apps Script sekiranya URL dikonfigurasi
                 if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("YOUR_SCRIPT_ID_HERE")) {
+                    const formData = new URLSearchParams();
+                    formData.append("nama", namaVal);
+                    formData.append("kehadiran", kehadiranVal);
+                    formData.append("bilangan", bilanganVal);
+                    formData.append("ucapan", ucapanVal);
+                    formData.append("tarikh", new Date().toLocaleString("ms-MY"));
+
                     fetch(GOOGLE_SCRIPT_URL, {
                         method: "POST",
                         mode: "no-cors",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    }).catch(err => console.log("Error sending RSVP:", err));
-                }
-
-                // Kemaskini paparan Buku Ucapan secara langsung
-                if (ucapanVal.trim() !== "" && wishesList) {
-                    const newWish = document.createElement("div");
-                    newWish.className = "wish-item";
-                    newWish.innerHTML = `
-                        <div class="wish-author">${escapeHtml(namaVal)}</div>
-                        <div class="wish-text">${escapeHtml(ucapanVal)}</div>
-                    `;
-                    wishesList.prepend(newWish);
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: formData.toString()
+                    }).catch(err => console.log("Ralat menghantar RSVP ke Apps Script:", err));
                 }
 
                 setTimeout(() => {
@@ -1743,7 +2070,6 @@
                     if (submitBtn) submitBtn.disabled = false;
                     if (rsvpModal) rsvpModal.classList.remove("active");
                     
-                    // Tunjukkan maklum balas kejayaan
                     if (toastMsg) {
                         toastMsg.innerText = "RSVP anda telah berjaya disimpan! Terima kasih.";
                         toastMsg.classList.add("show");
@@ -1753,7 +2079,7 @@
                     }
 
                     rsvpForm.reset();
-                }, 800);
+                }, 600);
             });
         }
 
